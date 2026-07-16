@@ -534,7 +534,7 @@
       </aside>
 
       <section class="register-panel" aria-label="Formulaire d'inscription">
-        <form class="register-card" action="#" method="post">
+        <form class="register-card" id="registerForm" action="#" method="post">
           <div class="card-header">
             <div class="drop-badge" aria-hidden="true">
               <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
@@ -555,7 +555,7 @@
             <input id="lastName" name="lastName" type="text" placeholder="Nom" autocomplete="family-name" required>
           </div>
 
-          <button class="submit-button" type="submit">Cr&eacute;er mon compte</button>
+          <button class="submit-button" id="submit" type="submit">Cr&eacute;er mon compte</button>
 
           <p class="signin">D&eacute;j&agrave; un compte ? <a href="login.html">Se connecter</a></p>
         </form>
@@ -563,4 +563,5 @@
     </section>
   </main>
 </body>
+<script src="script/register.js"></script>
 </html>

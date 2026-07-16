@@ -1,8 +1,14 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port= 3000;
 
 app.use(express.json());
+
+
+app.use(cors({
+  origin: "http://127.0.0.1:5500"
+}))
 
 
 app.get("/qwerty", (req, res) => {
@@ -11,9 +17,9 @@ app.get("/qwerty", (req, res) => {
   
 })
 
-app.get("/regıster", (req, res) => {
+app.post("/register", (req, res) => {
 
-  res.json({message: "valencia"})
+  console.log(req.body)
   
 })
 
