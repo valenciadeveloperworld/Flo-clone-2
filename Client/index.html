@@ -1,11 +1,747 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Mon cycle - Tableau de bord</title>
+  <style>
+    :root {
+      --text: #292738;
+      --muted: #777383;
+      --line: #ebe7ef;
+      --purple: #7659c8;
+      --purple-soft: #f2ecff;
+      --pink: #e75788;
+      --pink-soft: #ffeaf2;
+      --orange: #f0a061;
+      --orange-soft: #fff1e7;
+      --card: rgba(255, 255, 255, .93);
+      --shadow: 0 18px 44px rgba(80, 68, 120, .1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 14% 10%, rgba(255, 226, 239, .55), transparent 30%),
+        radial-gradient(circle at 90% 18%, rgba(245, 239, 255, .72), transparent 30%),
+        #fcf9fb;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 62px 1fr;
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      background: rgba(255, 255, 255, .84);
+      border-bottom: 1px solid rgba(237, 229, 239, .82);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      color: #20202a;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 6px 10px rgba(255, 127, 175, .24));
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(620px, 1fr) 390px;
+      gap: 18px;
+      padding: 26px 32px 34px;
+    }
+
+    .calendar-card,
+    .side-card,
+    .info-card {
+      border: 1px solid rgba(231, 226, 238, .9);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .calendar-card {
+      overflow: hidden;
+      border-radius: 14px;
+      padding: 28px 14px 14px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 86px;
+      margin: 0 0 30px;
+    }
+
+    .month-title {
+      margin: 0;
+      min-width: 260px;
+      text-align: center;
+      color: #302e3f;
+      font-size: 37px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      display: grid;
+      place-items: center;
+      color: var(--purple);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .weekdays {
+      padding: 0 16px 12px;
+      color: #6f6b77;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .calendar-grid {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .day {
+      position: relative;
+      min-height: 94px;
+      display: grid;
+      place-items: center;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: #15151c;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .day:nth-child(7n) {
+      border-right: 0;
+    }
+
+    .day:nth-last-child(-n + 7) {
+      border-bottom: 0;
+    }
+
+    .day.muted {
+      color: #b8b4bd;
+    }
+
+    .day.sunday,
+    .day.period {
+      color: #ca4d77;
+    }
+
+    .period-bubble {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #c64772;
+      background: var(--pink-soft);
+    }
+
+    .selected {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: radial-gradient(circle at 35% 28%, #8b70dc, #6f51bf);
+      font-size: 31px;
+      font-weight: 700;
+      box-shadow: 0 12px 22px rgba(112, 80, 190, .3);
+    }
+
+    .dot {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      background: var(--pink);
+    }
+
+    .dot.purple {
+      background: #a58be5;
+    }
+
+    .dot.orange {
+      background: var(--orange);
+    }
+
+    .fertile {
+      position: absolute;
+      inset: auto 16px auto 16px;
+      height: 48px;
+      border-radius: 999px;
+      background: rgba(255, 235, 220, .86);
+      z-index: 0;
+    }
+
+    .fertile.left {
+      left: 16px;
+      right: -1px;
+    }
+
+    .fertile.mid {
+      left: -1px;
+      right: -1px;
+      border-radius: 0;
+    }
+
+    .fertile.right {
+      left: -1px;
+      right: 16px;
+    }
+
+    .day > span,
+    .day > strong {
+      position: relative;
+      z-index: 1;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 0;
+      margin-top: 10px;
+    }
+
+    .info-card {
+      min-height: 90px;
+      display: grid;
+      grid-template-columns: 74px 1fr 34px;
+      align-items: center;
+      border-radius: 12px;
+      padding: 14px 22px;
+    }
+
+    .info-card + .info-card {
+      margin-top: 2px;
+    }
+
+    .icon-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+
+    .icon-circle.pink {
+      color: var(--pink);
+      background: var(--pink-soft);
+    }
+
+    .icon-circle.orange {
+      color: var(--orange);
+      background: var(--orange-soft);
+    }
+
+    .icon-circle.purple {
+      color: var(--purple);
+      background: var(--purple-soft);
+    }
+
+    .info-title {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .info-meta {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .info-meta strong {
+      color: #c84e7a;
+      font-weight: 700;
+    }
+
+    .info-meta .orange {
+      color: #df873f;
+    }
+
+    .info-meta .purple {
+      color: var(--purple);
+    }
+
+    .chevron {
+      justify-self: end;
+      color: #5d5966;
+    }
+
+    .side-card {
+      min-height: 100%;
+      border-radius: 12px;
+      padding: 40px 30px 34px;
+    }
+
+    .side-title {
+      margin: 0 0 34px;
+      padding-bottom: 34px;
+      border-bottom: 1px solid var(--line);
+      color: var(--purple);
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .side-section {
+      padding: 0 10px 32px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .side-label {
+      margin: 0 0 14px;
+      color: #363442;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .cycle-day {
+      margin: 0;
+      color: #2a2737;
+      font-size: 39px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .phase-pill {
+      width: fit-content;
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: var(--purple);
+      background: var(--purple-soft);
+      font-size: 17px;
+      box-shadow: 0 8px 18px rgba(127, 88, 217, .08);
+    }
+
+    .phase-pill::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--purple);
+    }
+
+    .note-text {
+      margin: 0;
+      color: #2e2b38;
+      font-size: 19px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      padding: 4px 10px 42px;
+    }
+
+    .action {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .round-button {
+      width: 70px;
+      height: 70px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--purple);
+      background: #fff;
+      box-shadow: 0 8px 16px rgba(80, 68, 120, .05);
+    }
+
+    .tip-card {
+      min-height: 136px;
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 22px;
+      border: 1px solid rgba(231, 226, 238, .86);
+      border-radius: 12px;
+      color: #4f4a5f;
+      background: linear-gradient(135deg, #faf5ff, #fff7fb);
+      box-shadow: 0 10px 24px rgba(80, 68, 120, .07);
+    }
+
+    .tip-plant {
+      color: #9278ca;
+      opacity: .82;
+    }
+
+    .tip-card p {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 1120px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .side-card {
+        min-height: 0;
+      }
+
+      .actions {
+        padding-bottom: 24px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-rows: 56px 1fr;
+      }
+
+      .titlebar {
+        padding: 0 16px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .dashboard {
+        padding: 16px;
+      }
+
+      .calendar-card {
+        padding: 22px 10px 10px;
+      }
+
+      .calendar-header {
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+
+      .month-title {
+        min-width: 0;
+        font-size: 29px;
+      }
+
+      .weekdays {
+        padding: 0 4px 10px;
+        font-size: 12px;
+      }
+
+      .day {
+        min-height: 64px;
+        font-size: 18px;
+      }
+
+      .period-bubble {
+        width: 38px;
+        height: 38px;
+      }
+
+      .selected {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+      }
+
+      .fertile {
+        height: 34px;
+        left: 6px;
+        right: 6px;
+      }
+
+      .dot {
+        bottom: 8px;
+        width: 6px;
+        height: 6px;
+      }
+
+      .info-card {
+        grid-template-columns: 58px 1fr 22px;
+        min-height: 82px;
+        padding: 12px;
+      }
+
+      .icon-circle {
+        width: 46px;
+        height: 46px;
+      }
+
+      .info-title {
+        font-size: 17px;
+      }
+
+      .info-meta,
+      .side-label,
+      .phase-pill,
+      .tip-card p {
+        font-size: 15px;
+      }
+
+      .side-card {
+        padding: 28px 20px;
+      }
+
+      .side-title {
+        font-size: 25px;
+      }
+
+      .cycle-day {
+        font-size: 32px;
+      }
+
+      .actions {
+        gap: 22px;
+      }
+
+      .round-button {
+        width: 58px;
+        height: 58px;
+      }
+    }
+  </style>
 </head>
 <body>
-  
+  <main class="app">
+    <header class="titlebar" aria-label="Barre de titre">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="#ff8fb8" d="M26.5 7C16 7 8 15.2 8 25.4 8 39.4 22.4 49 31.2 55.5c1.7 1.2 4 1.2 5.6 0C45.6 49 60 39.4 60 25.4 60 15.2 52 7 41.5 7 36.7 7 33.1 9.4 30.8 12.3 29.8 9.2 28.3 7 26.5 7Z"/>
+          <path fill="#ffc1d8" d="M17 24.9c0-6.5 4.7-11.4 10.2-11.4 2 0 3.7.8 5.1 2-1.1 4.8-1 10 .3 15.7 1.6 7.1 1.1 13.5-1.4 19C24.6 45.1 17 37.8 17 24.9Z"/>
+        </svg>
+        <span>Mon cycle</span>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <div>
+        <section class="calendar-card" aria-label="Calendrier du cycle">
+          <header class="calendar-header">
+            <button class="nav-btn" type="button" aria-label="Mois precedent">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m15 5-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <h1 class="month-title">Juil. 2026</h1>
+            <button class="nav-btn" type="button" aria-label="Mois suivant">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </header>
+
+          <div class="weekdays" aria-hidden="true">
+            <span>LUN.</span>
+            <span>MAR.</span>
+            <span>MER.</span>
+            <span>JEU.</span>
+            <span>VEN.</span>
+            <span>SAM.</span>
+            <span>DIM.</span>
+          </div>
+
+          <div class="calendar-grid">
+            <div class="day muted"><span>29</span></div>
+            <div class="day muted"><span>30</span></div>
+            <div class="day"><span>1</span></div>
+            <div class="day"><span>2</span></div>
+            <div class="day period"><span class="period-bubble">3</span><i class="dot"></i></div>
+            <div class="day period"><span class="period-bubble">4</span><i class="dot"></i></div>
+            <div class="day period"><span class="period-bubble">5</span><i class="dot"></i></div>
+
+            <div class="day"><span>6</span></div>
+            <div class="day"><span>7</span></div>
+            <div class="day"><span>8</span></div>
+            <div class="day"><span>9</span></div>
+            <div class="day"><span>10</span></div>
+            <div class="day"><span>11</span></div>
+            <div class="day sunday"><span>12</span></div>
+
+            <div class="day"><span>13</span></div>
+            <div class="day"><span>14</span></div>
+            <div class="day"><span>15</span></div>
+            <div class="day"><strong class="selected">16</strong><i class="dot purple"></i></div>
+            <div class="day"><span>17</span></div>
+            <div class="day"><span class="fertile left"></span><span>18</span><i class="dot orange"></i></div>
+            <div class="day period"><span class="fertile right"></span><span>19</span><i class="dot orange"></i></div>
+
+            <div class="day"><span class="fertile left"></span><span>20</span><i class="dot orange"></i></div>
+            <div class="day"><span class="fertile mid"></span><span>21</span><i class="dot orange"></i></div>
+            <div class="day"><span class="fertile right"></span><span>22</span><i class="dot orange"></i></div>
+            <div class="day"><span>23</span></div>
+            <div class="day"><span>24</span></div>
+            <div class="day"><span>25</span></div>
+            <div class="day sunday"><span>26</span></div>
+
+            <div class="day"><span>27</span></div>
+            <div class="day"><span>28</span></div>
+            <div class="day"><span>29</span></div>
+            <div class="day"><span>30</span></div>
+            <div class="day"><span>31</span></div>
+            <div class="day muted"><span>1</span></div>
+            <div class="day muted"><span>2</span></div>
+          </div>
+        </section>
+
+        <section class="summary-list" aria-label="Resume du cycle">
+          <article class="info-card">
+            <div class="icon-circle pink" aria-hidden="true">
+              <svg width="31" height="31" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3C8 8.1 5 12.4 5 16a7 7 0 0 0 14 0c0-3.6-3-7.9-7-13Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="info-title">Prochaines r&egrave;gles</p>
+              <div class="info-meta">
+                <strong>Dans 18 jours</strong>
+                <span>3 - 7 ao&ucirc;t 2026</span>
+              </div>
+            </div>
+            <svg class="chevron" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </article>
+
+          <article class="info-card">
+            <div class="icon-circle orange" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="3.1" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M12 3.6c1.4 1.6 1.4 3 0 4.5-1.4-1.5-1.4-2.9 0-4.5ZM12 15.9c1.4 1.5 1.4 2.9 0 4.5-1.4-1.6-1.4-3 0-4.5ZM3.6 12c1.6-1.4 3-1.4 4.5 0-1.5 1.4-2.9 1.4-4.5 0ZM15.9 12c1.5-1.4 2.9-1.4 4.5 0-1.6 1.4-3 1.4-4.5 0ZM6.1 6.1c2.1.1 3.1 1.1 3.2 3.2-2.1-.1-3.1-1.1-3.2-3.2ZM14.7 14.7c2.1.1 3.1 1.1 3.2 3.2-2.1-.1-3.1-1.1-3.2-3.2ZM17.9 6.1c-.1 2.1-1.1 3.1-3.2 3.2.1-2.1 1.1-3.1 3.2-3.2ZM9.3 14.7c-.1 2.1-1.1 3.1-3.2 3.2.1-2.1 1.1-3.1 3.2-3.2Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="info-title">Fen&ecirc;tre fertile</p>
+              <div class="info-meta">
+                <strong class="orange">18 - 22 juil.</strong>
+                <span>Fertilit&eacute; &eacute;lev&eacute;e</span>
+              </div>
+            </div>
+            <svg class="chevron" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </article>
+
+          <article class="info-card">
+            <div class="icon-circle purple" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M8.5 10h.01M15.5 10h.01M8.7 14.2c1.8 1.8 4.8 1.8 6.6 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="info-title">Humeur / sympt&ocirc;mes</p>
+              <div class="info-meta">
+                <strong class="purple">Calme, &eacute;nergie stable</strong>
+                <span>Aucun sympt&ocirc;me not&eacute;</span>
+              </div>
+            </div>
+            <svg class="chevron" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </article>
+        </section>
+      </div>
+
+      <aside class="side-card" aria-label="Details du jour">
+        <h2 class="side-title">Jeudi 16 juil. 2026</h2>
+
+        <section class="side-section">
+          <p class="side-label">Jour du cycle</p>
+          <p class="cycle-day">J16</p>
+        </section>
+
+        <section class="side-section">
+          <p class="side-label">Phase actuelle</p>
+          <span class="phase-pill">Phase folliculaire</span>
+        </section>
+
+        <section class="side-section">
+          <p class="side-label">Note du jour</p>
+          <p class="note-text">Bonne &eacute;nergie ce matin.<br>S&eacute;ance de yoga en soir&eacute;e.</p>
+        </section>
+
+        <div class="actions">
+          <div class="action">
+            <button class="round-button" type="button" aria-label="Ajouter l'humeur">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 20s-7-4.4-7-10.1A3.9 3.9 0 0 1 12 7.5a3.9 3.9 0 0 1 7 2.4C19 15.6 12 20 12 20Z" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <span>Humeur</span>
+          </div>
+
+          <div class="action">
+            <button class="round-button" type="button" aria-label="Ajouter une note">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="6" y="4" width="12" height="16" rx="1.8" stroke="currentColor" stroke-width="1.65"/>
+                <path d="M9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <span>Note</span>
+          </div>
+        </div>
+
+        <article class="tip-card">
+          <svg class="tip-plant" width="52" height="86" viewBox="0 0 52 86" fill="none" aria-hidden="true">
+            <path d="M25 84C28 61 29 39 24 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M24 28c-9-6-11-14-4-23 7 7 8 15 4 23ZM27 47c8-8 17-9 24-2-7 7-16 8-24 2ZM24 63C13 58 9 50 14 40c9 6 12 14 10 23ZM28 34c6-8 13-10 21-6-5 8-12 11-21 6Z" fill="currentColor" opacity=".55"/>
+          </svg>
+          <p>Boire de l'eau et manger &eacute;quilibr&eacute; peut soutenir votre &eacute;nergie aujourd'hui.</p>
+        </article>
+      </aside>
+    </section>
+  </main>
 </body>
 </html>

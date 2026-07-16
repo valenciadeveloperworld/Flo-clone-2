@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon cycle - Connexion</title>
+  <style>
+    :root {
+      --text: #302e45;
+      --muted: #747086;
+      --line: #eeeaf4;
+      --purple: #7f58d9;
+      --purple-dark: #6d49cf;
+      --pink: #ff9fc3;
+      --pink-soft: #fff4f9;
+      --violet-soft: #f4ecff;
+      --shadow: 0 24px 56px rgba(80, 68, 120, .13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: #fbf9fc;
+    }
+
+    .app-window {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 62px 1fr;
+      background: linear-gradient(90deg, #fff8fb 0%, #fff8fb 41%, #fdfcff 41%, #ffffff 100%);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(255, 255, 255, .82);
+      border-bottom: 1px solid rgba(237, 229, 239, .78);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #20202b;
+    }
+
+    .brand-drop {
+      width: 26px;
+      height: 26px;
+      filter: drop-shadow(0 6px 10px rgba(255, 127, 175, .24));
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(390px, 41%) 1fr;
+      min-height: 0;
+    }
+
+    .welcome-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(34px, 4vw, 64px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 18% 36%, rgba(166, 132, 221, .16) 0 62px, transparent 63px),
+        radial-gradient(circle at 33% 22%, rgba(255, 183, 211, .18) 0 88px, transparent 89px),
+        linear-gradient(180deg, rgba(255, 248, 251, .98), rgba(255, 246, 250, .98));
+    }
+
+    .welcome-panel::before,
+    .welcome-panel::after {
+      content: "";
+      position: absolute;
+      left: -8%;
+      right: -8%;
+      pointer-events: none;
+      transform: rotate(4deg);
+    }
+
+    .welcome-panel::before {
+      bottom: 95px;
+      height: 180px;
+      border-radius: 52% 48% 0 0;
+      background: rgba(233, 210, 247, .72);
+    }
+
+    .welcome-panel::after {
+      bottom: -42px;
+      height: 250px;
+      border-radius: 57% 43% 0 0;
+      background: linear-gradient(135deg, rgba(226, 206, 247, .72), rgba(255, 220, 235, .84));
+      transform: rotate(-6deg);
+    }
+
+    .welcome-art {
+      position: relative;
+      z-index: 1;
+      width: min(540px, 100%);
+      min-height: 575px;
+    }
+
+    .main-drop {
+      position: absolute;
+      top: 108px;
+      left: 50%;
+      width: 154px;
+      height: 214px;
+      transform: translateX(-50%);
+      border-radius: 76% 24% 62% 38% / 78% 28% 72% 22%;
+      rotate: 45deg;
+      background:
+        radial-gradient(circle at 66% 72%, rgba(255, 255, 255, .9) 0 9px, transparent 10px),
+        radial-gradient(circle at 35% 30%, rgba(255, 236, 246, .96), rgba(255, 164, 198, .9) 62%, rgba(243, 121, 173, .58));
+      box-shadow:
+        inset 15px 16px 20px rgba(255, 255, 255, .6),
+        inset -10px -16px 22px rgba(215, 91, 151, .18),
+        0 16px 28px rgba(235, 108, 166, .23);
+    }
+
+    .main-drop::after {
+      content: "";
+      position: absolute;
+      right: 24px;
+      bottom: 28px;
+      width: 62px;
+      height: 16px;
+      border-bottom: 5px solid rgba(255, 255, 255, .72);
+      border-radius: 50%;
+      transform: rotate(-18deg);
+    }
+
+    .plant {
+      position: absolute;
+      width: 128px;
+      height: 250px;
+      opacity: .78;
+    }
+
+    .plant.left {
+      left: -22px;
+      bottom: 84px;
+      color: #b69be1;
+    }
+
+    .plant.right {
+      right: 12px;
+      bottom: 112px;
+      color: #f5a9c7;
+      transform: scaleX(-1) rotate(-5deg);
+      opacity: .68;
+    }
+
+    .plant .stem {
+      position: absolute;
+      left: 62px;
+      bottom: 0;
+      width: 3px;
+      height: 225px;
+      background: currentColor;
+      border-radius: 999px;
+      transform: rotate(12deg);
+      opacity: .55;
+    }
+
+    .leaf {
+      position: absolute;
+      width: 42px;
+      height: 22px;
+      border-radius: 100% 0 100% 0;
+      background: currentColor;
+      opacity: .54;
+      transform-origin: right center;
+    }
+
+    .leaf:nth-child(2) { left: 30px; bottom: 48px; transform: rotate(-34deg); }
+    .leaf:nth-child(3) { left: 70px; bottom: 72px; transform: rotate(142deg); }
+    .leaf:nth-child(4) { left: 22px; bottom: 105px; transform: rotate(-28deg); }
+    .leaf:nth-child(5) { left: 78px; bottom: 132px; transform: rotate(142deg); }
+    .leaf:nth-child(6) { left: 38px; bottom: 166px; transform: rotate(-50deg); }
+    .leaf:nth-child(7) { left: 80px; bottom: 194px; transform: rotate(138deg); }
+
+    .speck {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(238, 183, 226, .42);
+    }
+
+    .speck.one { top: 115px; left: 110px; width: 8px; height: 8px; }
+    .speck.two { top: 84px; right: 168px; background: rgba(255, 143, 190, .38); }
+    .speck.three { top: 170px; right: 96px; width: 7px; height: 7px; background: rgba(187, 154, 229, .3); }
+
+    .welcome-copy {
+      position: absolute;
+      left: 118px;
+      bottom: 158px;
+      max-width: 340px;
+    }
+
+    .welcome-copy h1 {
+      margin: 0 0 18px;
+      font-size: 31px;
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: #363449;
+    }
+
+    .welcome-copy span {
+      color: #ff88b6;
+      margin-left: 8px;
+      font-size: 28px;
+    }
+
+    .welcome-copy p {
+      margin: 0;
+      color: #434055;
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
+    .login-panel {
+      display: grid;
+      place-items: center;
+      padding: clamp(36px, 6vw, 72px);
+    }
+
+    .login-card {
+      width: min(100%, 646px);
+      min-height: 704px;
+      padding: 72px 58px 48px;
+      border: 1px solid rgba(231, 226, 238, .9);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 42px;
+    }
+
+    .lock-badge {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--purple);
+      background: #f5efff;
+    }
+
+    .card-header h2 {
+      margin: 0 0 8px;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: #302e45;
+    }
+
+    .card-header p {
+      margin: 0;
+      font-size: 18px;
+      color: #6a667b;
+    }
+
+    .form-group {
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #373449;
+    }
+
+    .field {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field svg {
+      position: absolute;
+      color: #8d70c7;
+      pointer-events: none;
+    }
+
+    .field .leading {
+      left: 20px;
+    }
+
+    .field input {
+      width: 100%;
+      height: 60px;
+      padding: 0 56px;
+      border: 1px solid #e3dfeb;
+      border-radius: 12px;
+      outline: none;
+      color: #332f43;
+      background: #fff;
+      font: inherit;
+      font-size: 17px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .field input::placeholder {
+      color: #c8c3ce;
+    }
+
+    .field input:focus {
+      border-color: rgba(127, 88, 217, .62);
+      box-shadow: 0 0 0 4px rgba(127, 88, 217, .1);
+    }
+
+    .icon-button {
+      position: absolute;
+      right: 18px;
+      width: 28px;
+      height: 28px;
+      border: 0;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      color: #a29bae;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .submit-button {
+      width: 100%;
+      height: 58px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 9px;
+      color: #fff;
+      background: linear-gradient(90deg, var(--purple-dark), var(--purple));
+      font-size: 19px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(111, 75, 207, .22);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .submit-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(111, 75, 207, .28);
+    }
+
+    .signup {
+      margin: 38px 0 0;
+      text-align: center;
+      color: #625d70;
+      font-size: 17px;
+    }
+
+    .signup a {
+      color: #704bd0;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .signup a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 920px) {
+      .app-window {
+        grid-template-rows: 56px 1fr;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome-panel {
+        min-height: 390px;
+      }
+
+      .welcome-art {
+        min-height: 330px;
+      }
+
+      .main-drop {
+        top: 24px;
+        width: 118px;
+        height: 164px;
+      }
+
+      .welcome-copy {
+        left: 50%;
+        bottom: 52px;
+        transform: translateX(-50%);
+        width: min(330px, 90vw);
+        text-align: center;
+      }
+
+      .plant.left {
+        left: 12px;
+        bottom: 42px;
+      }
+
+      .plant.right {
+        right: 2px;
+        bottom: 50px;
+      }
+
+      .login-panel {
+        padding: 28px 18px 42px;
+      }
+
+      .login-card {
+        min-height: 0;
+        padding: 42px 24px 34px;
+      }
+
+      .card-header h2 {
+        font-size: 34px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .titlebar {
+        padding: 0 16px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .welcome-panel {
+        padding: 22px;
+      }
+
+      .welcome-copy h1 {
+        font-size: 27px;
+      }
+
+      .welcome-copy p,
+      .card-header p,
+      .signup {
+        font-size: 16px;
+      }
+
+      .field input {
+        height: 56px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-window">
+    <header class="titlebar" aria-label="Barre de titre">
+      <div class="brand">
+        <svg class="brand-drop" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="#ff9fc3" d="M32 5C20.4 20.2 12.5 31.8 12.5 42.6 12.5 53 20.6 60 32 60s19.5-7 19.5-17.4C51.5 31.8 43.6 20.2 32 5Z"/>
+          <path fill="#ffc4da" d="M32 9.8C23 22.7 17.2 32.5 17.2 41.4 17.2 50.1 23.3 55.8 32 55.8c-4.1-6-4.8-13.8-2.4-23.1 1.4-5.5 2.3-13.3 2.4-22.9Z"/>
+        </svg>
+        <span>Mon cycle</span>
+      </div>
+    </header>
+
+    <section class="content">
+      <aside class="welcome-panel" aria-label="Bienvenue">
+        <div class="welcome-art">
+          <span class="speck one"></span>
+          <span class="speck two"></span>
+          <span class="speck three"></span>
+
+          <div class="main-drop" aria-hidden="true"></div>
+
+          <div class="plant left" aria-hidden="true">
+            <span class="stem"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+          </div>
+
+          <div class="plant right" aria-hidden="true">
+            <span class="stem"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+          </div>
+
+          <div class="welcome-copy">
+            <h1>Bienvenue <span aria-hidden="true">&hearts;</span></h1>
+            <p>Prenez soin de vous, chaque jour.<br>Nous sommes l&agrave; pour vous accompagner.</p>
+          </div>
+        </div>
+      </aside>
+
+      <section class="login-panel" aria-label="Formulaire de connexion">
+        <form class="login-card" action="#" method="post">
+          <div class="card-header">
+            <div class="lock-badge" aria-hidden="true">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+                <rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7.7a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 14v2.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h2>Connexion</h2>
+            <p>Acc&eacute;dez &agrave; votre espace personnel</p>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Adresse e-mail</label>
+            <div class="field">
+              <svg class="leading" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <input id="email" name="email" type="email" placeholder="exemple@email.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="field">
+              <svg class="leading" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7.8a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 14.5v1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              <input id="password" name="password" type="password" placeholder="********" autocomplete="current-password" required>
+              <button class="icon-button" type="button" aria-label="Afficher ou masquer le mot de passe" id="togglePassword">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M3.5 3.5 20.5 20.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M10.6 10.7a2 2 0 0 0 2.7 2.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M8.3 5.4A9.8 9.8 0 0 1 12 4.7c5 0 8.4 4.5 9.5 6.2a2 2 0 0 1 0 2.2 16.7 16.7 0 0 1-2.1 2.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M15.4 18.2a10 10 0 0 1-3.4.6c-5 0-8.4-4.5-9.5-6.2a2 2 0 0 1 0-2.2A17.8 17.8 0 0 1 5.6 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button class="submit-button" type="submit">Se connecter</button>
+
+          <p class="signup">Pas encore de compte ? <a href="Register.html">Cr&eacute;er un compte</a></p>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", () => {
+      password.type = password.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>

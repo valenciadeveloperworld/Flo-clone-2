@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon cycle - Inscription</title>
+  <style>
+    :root {
+      --text: #302e45;
+      --muted: #716d80;
+      --purple: #7f58d9;
+      --purple-dark: #6d49cf;
+      --pink: #ff8fb8;
+      --rose: #fff7fa;
+      --shadow: 0 24px 56px rgba(80, 68, 120, .13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: #fbf9fc;
+    }
+
+    .app-window {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 68px 1fr;
+      background: linear-gradient(90deg, #fff8fb 0%, #fff8fb 45%, #fdfcff 45%, #ffffff 100%);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      background: rgba(255, 255, 255, .84);
+      border-bottom: 1px solid rgba(237, 229, 239, .78);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #20202b;
+    }
+
+    .brand-drop {
+      width: 26px;
+      height: 26px;
+      filter: drop-shadow(0 6px 10px rgba(255, 127, 175, .24));
+    }
+
+    .content {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(430px, 45.5%) 1fr;
+    }
+
+    .welcome-panel {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(34px, 5vw, 72px);
+      background:
+        radial-gradient(circle at 66% 12%, rgba(151, 116, 210, .22) 0 10px, transparent 11px),
+        radial-gradient(circle at 18% 32%, rgba(255, 142, 187, .28) 0 7px, transparent 8px),
+        radial-gradient(circle at 75% 26%, rgba(255, 142, 187, .23) 0 6px, transparent 7px),
+        linear-gradient(180deg, rgba(255, 249, 252, .98), rgba(255, 247, 251, .98));
+    }
+
+    .welcome-panel::before,
+    .welcome-panel::after {
+      content: "";
+      position: absolute;
+      left: -10%;
+      right: -8%;
+      pointer-events: none;
+    }
+
+    .welcome-panel::before {
+      bottom: 156px;
+      height: 150px;
+      border-radius: 50% 50% 0 0;
+      background: rgba(255, 218, 235, .58);
+      transform: rotate(5deg);
+    }
+
+    .welcome-panel::after {
+      bottom: 78px;
+      height: 210px;
+      border-radius: 48% 52% 0 0;
+      background: linear-gradient(135deg, rgba(255, 224, 238, .74), rgba(211, 197, 244, .72));
+      transform: rotate(-6deg);
+    }
+
+    .welcome-art {
+      position: relative;
+      z-index: 1;
+      width: min(610px, 100%);
+      min-height: 650px;
+    }
+
+    .main-drop {
+      position: absolute;
+      top: 110px;
+      left: 47%;
+      width: 168px;
+      height: 245px;
+      transform: translateX(-50%);
+      border-radius: 58% 42% 54% 46% / 73% 74% 26% 27%;
+      background:
+        radial-gradient(circle at 63% 67%, rgba(255, 255, 255, .6) 0 3px, transparent 4px),
+        radial-gradient(circle at 40% 56%, rgba(255, 255, 255, .5) 0 3px, transparent 4px),
+        radial-gradient(circle at 43% 44%, rgba(255, 235, 246, .82), rgba(255, 176, 207, .78) 64%, rgba(245, 143, 188, .38));
+      box-shadow:
+        inset 16px 16px 24px rgba(255, 255, 255, .48),
+        inset -10px -16px 24px rgba(214, 105, 160, .12),
+        0 18px 34px rgba(240, 129, 180, .12);
+      clip-path: path("M84 0 C118 55 168 108 168 163 C168 212 132 245 84 245 C36 245 0 212 0 163 C0 108 50 55 84 0 Z");
+    }
+
+    .main-drop::after {
+      content: "";
+      position: absolute;
+      left: 36px;
+      top: 76px;
+      width: 22px;
+      height: 72px;
+      border-left: 9px solid rgba(255, 255, 255, .56);
+      border-radius: 50%;
+      transform: rotate(22deg);
+    }
+
+    .lavender {
+      position: absolute;
+      left: 54px;
+      top: 96px;
+      width: 160px;
+      height: 350px;
+      color: #8f78c9;
+      opacity: .68;
+    }
+
+    .lavender .stem {
+      position: absolute;
+      bottom: 0;
+      left: 88px;
+      width: 3px;
+      height: 320px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .bud {
+      position: absolute;
+      left: 73px;
+      width: 26px;
+      height: 18px;
+      border-radius: 50% 50% 46% 54%;
+      background: currentColor;
+      transform: rotate(72deg);
+      opacity: .8;
+    }
+
+    .bud:nth-child(2) { top: 10px; transform: rotate(96deg) scale(.74); }
+    .bud:nth-child(3) { top: 42px; left: 70px; transform: rotate(78deg) scale(.88); }
+    .bud:nth-child(4) { top: 75px; left: 67px; transform: rotate(82deg); }
+    .bud:nth-child(5) { top: 112px; left: 63px; transform: rotate(90deg) scale(1.1); }
+    .bud:nth-child(6) { top: 151px; left: 69px; transform: rotate(95deg) scale(.92); }
+
+    .side-plant {
+      position: absolute;
+      width: 150px;
+      height: 280px;
+      color: #eda5c1;
+      opacity: .67;
+    }
+
+    .side-plant.left {
+      left: 12px;
+      bottom: 162px;
+      color: #aa92d8;
+      transform: rotate(-12deg);
+    }
+
+    .side-plant.right {
+      right: 38px;
+      bottom: 176px;
+      transform: scaleX(-1) rotate(-4deg);
+    }
+
+    .side-plant .stem {
+      position: absolute;
+      left: 75px;
+      bottom: 0;
+      width: 3px;
+      height: 250px;
+      border-radius: 999px;
+      background: currentColor;
+      transform: rotate(14deg);
+      opacity: .55;
+    }
+
+    .leaf {
+      position: absolute;
+      width: 43px;
+      height: 23px;
+      border-radius: 100% 0 100% 0;
+      background: currentColor;
+      opacity: .55;
+      transform-origin: right center;
+    }
+
+    .leaf:nth-child(2) { left: 43px; bottom: 54px; transform: rotate(-34deg); }
+    .leaf:nth-child(3) { left: 82px; bottom: 84px; transform: rotate(142deg); }
+    .leaf:nth-child(4) { left: 32px; bottom: 124px; transform: rotate(-32deg); }
+    .leaf:nth-child(5) { left: 88px; bottom: 158px; transform: rotate(142deg); }
+    .leaf:nth-child(6) { left: 50px; bottom: 200px; transform: rotate(-50deg); }
+
+    .speck {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 141, 187, .3);
+    }
+
+    .speck.one { top: 78px; left: 238px; width: 4px; height: 4px; }
+    .speck.two { top: 122px; left: 254px; width: 5px; height: 5px; }
+    .speck.three { top: 246px; right: 118px; }
+    .speck.four { top: 332px; left: 304px; width: 9px; height: 9px; }
+    .speck.five { bottom: 222px; left: 265px; width: 7px; height: 7px; }
+
+    .welcome-copy {
+      position: absolute;
+      left: 44px;
+      bottom: 28px;
+      max-width: 560px;
+    }
+
+    .welcome-copy h1 {
+      margin: 0 0 18px;
+      font-size: 31px;
+      line-height: 1.18;
+      letter-spacing: 0;
+      color: #302e45;
+    }
+
+    .welcome-copy h1 span {
+      color: #dc4f7d;
+    }
+
+    .welcome-copy p {
+      margin: 0;
+      max-width: 500px;
+      color: #686477;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .register-panel {
+      display: grid;
+      place-items: center;
+      padding: clamp(36px, 5.2vw, 70px);
+    }
+
+    .register-card {
+      width: min(100%, 810px);
+      min-height: 740px;
+      padding: 52px 80px 46px;
+      border: 1px solid rgba(231, 226, 238, .9);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .drop-badge {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--purple);
+      background: #f5efff;
+    }
+
+    .card-header h2 {
+      margin: 0 0 12px;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: #302e45;
+    }
+
+    .card-header p {
+      margin: 0;
+      font-size: 22px;
+      color: #777384;
+    }
+
+    .form-group {
+      margin-bottom: 26px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #343146;
+    }
+
+    input {
+      width: 100%;
+      height: 64px;
+      padding: 0 22px;
+      border: 1px solid #e3dfeb;
+      border-radius: 11px;
+      outline: none;
+      color: #332f43;
+      background: #fff;
+      font: inherit;
+      font-size: 21px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    input::placeholder {
+      color: #c7c2cc;
+    }
+
+    input:focus {
+      border-color: rgba(127, 88, 217, .62);
+      box-shadow: 0 0 0 4px rgba(127, 88, 217, .1);
+    }
+
+    .submit-button {
+      width: 100%;
+      height: 64px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 11px;
+      color: #fff;
+      background: linear-gradient(90deg, var(--purple-dark), var(--purple));
+      font-size: 23px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(111, 75, 207, .22);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .submit-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(111, 75, 207, .28);
+    }
+
+    .signin {
+      margin: 28px 0 0;
+      text-align: center;
+      color: #777384;
+      font-size: 20px;
+    }
+
+    .signin a {
+      color: #704bd0;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    @media (max-width: 1020px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome-panel {
+        min-height: 440px;
+      }
+
+      .welcome-art {
+        min-height: 370px;
+      }
+
+      .main-drop {
+        top: 24px;
+        width: 126px;
+        height: 184px;
+      }
+
+      .lavender,
+      .side-plant {
+        transform: scale(.72);
+        transform-origin: center bottom;
+      }
+
+      .side-plant.left {
+        left: 24px;
+        bottom: 86px;
+      }
+
+      .side-plant.right {
+        right: 20px;
+        bottom: 100px;
+        transform: scaleX(-1) scale(.72) rotate(-4deg);
+      }
+
+      .welcome-copy {
+        left: 50%;
+        bottom: 22px;
+        width: min(520px, 88vw);
+        transform: translateX(-50%);
+        text-align: center;
+      }
+
+      .register-panel {
+        padding: 30px 18px 44px;
+      }
+
+      .register-card {
+        min-height: 0;
+        padding: 42px 28px 34px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .app-window {
+        grid-template-rows: 56px 1fr;
+      }
+
+      .titlebar {
+        padding: 0 16px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .welcome-panel {
+        padding: 20px;
+      }
+
+      .welcome-copy h1,
+      .card-header h2 {
+        font-size: 28px;
+      }
+
+      .welcome-copy p,
+      .card-header p,
+      .signin {
+        font-size: 16px;
+      }
+
+      label {
+        font-size: 16px;
+      }
+
+      input,
+      .submit-button {
+        height: 56px;
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-window">
+    <header class="titlebar" aria-label="Barre de titre">
+      <div class="brand">
+        <svg class="brand-drop" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="#ff8fb8" d="M26.5 7C16 7 8 15.2 8 25.4 8 39.4 22.4 49 31.2 55.5c1.7 1.2 4 1.2 5.6 0C45.6 49 60 39.4 60 25.4 60 15.2 52 7 41.5 7 36.7 7 33.1 9.4 30.8 12.3 29.8 9.2 28.3 7 26.5 7Z"/>
+          <path fill="#ffc1d8" d="M17 24.9c0-6.5 4.7-11.4 10.2-11.4 2 0 3.7.8 5.1 2-1.1 4.8-1 10 .3 15.7 1.6 7.1 1.1 13.5-1.4 19C24.6 45.1 17 37.8 17 24.9Z"/>
+        </svg>
+        <span>Mon cycle</span>
+      </div>
+    </header>
+
+    <section class="content">
+      <aside class="welcome-panel" aria-label="Presentation">
+        <div class="welcome-art">
+          <span class="speck one"></span>
+          <span class="speck two"></span>
+          <span class="speck three"></span>
+          <span class="speck four"></span>
+          <span class="speck five"></span>
+
+          <div class="lavender" aria-hidden="true">
+            <span class="stem"></span>
+            <span class="bud"></span>
+            <span class="bud"></span>
+            <span class="bud"></span>
+            <span class="bud"></span>
+            <span class="bud"></span>
+          </div>
+
+          <div class="main-drop" aria-hidden="true"></div>
+
+          <div class="side-plant left" aria-hidden="true">
+            <span class="stem"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+          </div>
+
+          <div class="side-plant right" aria-hidden="true">
+            <span class="stem"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+            <span class="leaf"></span>
+          </div>
+
+          <div class="welcome-copy">
+            <h1>Prenez soin de vous, <span>chaque jour.</span></h1>
+            <p>Mon cycle vous accompagne avec douceur<br>pour mieux comprendre votre corps.</p>
+          </div>
+        </div>
+      </aside>
+
+      <section class="register-panel" aria-label="Formulaire d'inscription">
+        <form class="register-card" action="#" method="post">
+          <div class="card-header">
+            <div class="drop-badge" aria-hidden="true">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3C8 8.1 5 12.4 5 16a7 7 0 0 0 14 0c0-3.6-3-7.9-7-13Z" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2>Cr&eacute;er un compte</h2>
+            <p>Commencez votre suivi simplement</p>
+          </div>
+
+          <div class="form-group">
+            <label for="firstName">Pr&eacute;nom</label>
+            <input id="firstName" name="firstName" type="text" placeholder="Pr&eacute;nom" autocomplete="given-name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Nom</label>
+            <input id="lastName" name="lastName" type="text" placeholder="Nom" autocomplete="family-name" required>
+          </div>
+
+          <button class="submit-button" type="submit">Cr&eacute;er mon compte</button>
+
+          <p class="signin">D&eacute;j&agrave; un compte ? <a href="login.html">Se connecter</a></p>
+        </form>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
